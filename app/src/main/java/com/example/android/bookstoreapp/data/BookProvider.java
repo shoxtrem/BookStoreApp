@@ -7,8 +7,11 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.android.bookstoreapp.R;
 import com.example.android.bookstoreapp.data.BookContract.BookEntry;
 
 /**
@@ -137,20 +140,19 @@ public class BookProvider extends ContentProvider {
     private Uri insertBook(Uri uri, ContentValues values) {
         // Check that the name is not null
         String name = values.getAsString(BookContract.BookEntry.COLUMN_BOOK_NAME);
-        if (name == null) {
+
+        if (TextUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Book requires a name");
         }
 
         // Check that the phoneNumber is valid
         String phoneNumber = values.getAsString(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
-        if (phoneNumber == null
-//                || !BookContract.BookEntry.isValidPhoneNumber(phoneNumber)
-                ) {
+        if (TextUtils.isEmpty(phoneNumber)) {
             throw new IllegalArgumentException("Book requires valid Phone Number");
         }
 
         // If the price is provided, check that it's greater than or equal to 0$
-        Integer price = values.getAsInteger(BookEntry.COLUMN_BOOK_PRICE);
+        Float price = values.getAsFloat(BookEntry.COLUMN_BOOK_PRICE);
         if (price != null && price < 0) {
             throw new IllegalArgumentException("Book requires valid price");
         }
@@ -210,7 +212,7 @@ public class BookProvider extends ContentProvider {
         // check that the name value is not null.
         if (values.containsKey(BookContract.BookEntry.COLUMN_BOOK_NAME)) {
             String name = values.getAsString(BookEntry.COLUMN_BOOK_NAME);
-            if (name == null) {
+            if (TextUtils.isEmpty(name)) {
                 throw new IllegalArgumentException("Book requires a name");
             }
         }
@@ -219,9 +221,7 @@ public class BookProvider extends ContentProvider {
         // check that the phone number value is valid.
         if (values.containsKey(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER)) {
             String phoneNumber = values.getAsString(BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER);
-            if (phoneNumber == null
-//                    || !BookContract.BookEntry.isValidPhoneNumber(phoneNumber)
-                    ) {
+            if (TextUtils.isEmpty(phoneNumber)) {
                 throw new IllegalArgumentException("Book requires valid Phone Number");
             }
         }
@@ -230,8 +230,8 @@ public class BookProvider extends ContentProvider {
         // check that the price value is valid.
         if (values.containsKey(BookEntry.COLUMN_BOOK_PRICE)) {
             // Check that the price is greater than or equal to 0$
-            Integer weight = values.getAsInteger(BookEntry.COLUMN_BOOK_PRICE);
-            if (weight != null && weight < 0) {
+            Float price = values.getAsFloat(BookEntry.COLUMN_BOOK_PRICE);
+            if (price != null && price < 0) {
                 throw new IllegalArgumentException("Book requires valid price");
             }
         }

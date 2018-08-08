@@ -137,7 +137,7 @@ public class EditorActivity extends AppCompatActivity implements
         String supplierString = supplierEditText.getText().toString().trim();
         String priceString = priceEditText.getText().toString().trim();
         String quantityString = quantityEditText.getText().toString().trim();
-        String supplierPhoneNumberString = supplierEditText.getText().toString().trim();
+        String supplierPhoneNumberString = phoneNumberEditText.getText().toString().trim();
 
         // Check if this is supposed to be a new book
         // and check if all the fields in the editor are blank
@@ -152,14 +152,31 @@ public class EditorActivity extends AppCompatActivity implements
         // Create a ContentValues object where column names are the keys,
         // and book attributes from the editor are the values.
         ContentValues values = new ContentValues();
-        values.put(BookContract.BookEntry.COLUMN_BOOK_NAME, nameString);
+
+
+
+            if (TextUtils.isEmpty(nameString)) {
+                Toast.makeText(getApplicationContext(), "Name required", Toast.LENGTH_LONG).show();
+                nameEditText.setError("Name required");
+
+            } else if (!TextUtils.isEmpty(nameString)) {
+                values.put(BookContract.BookEntry.COLUMN_BOOK_NAME, nameString);
+
+            }
+
+
         values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_NAME, supplierString);
-        values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, supplierPhoneNumberString);
+
+        int supplierPhoneNumber = 0;
+        if (!TextUtils.isEmpty(supplierPhoneNumberString)) {
+            supplierPhoneNumber = Integer.parseInt(supplierPhoneNumberString);
+        }
+        values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, supplierPhoneNumber);
         // If the price is not provided by the user, don't try to parse the string into an
         // integer value. Use 0 by default.
-        int price = 0;
+        float price = 0;
         if (!TextUtils.isEmpty(priceString)) {
-            price = Integer.parseInt(priceString);
+            price = Float.parseFloat(priceString);
         }
         values.put(BookContract.BookEntry.COLUMN_BOOK_PRICE, price);
 
@@ -234,12 +251,17 @@ public class EditorActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Save book to database
-                saveBook();
-                // Exit activity
-                finish();
-                return true;
-            // Respond to a click on the "Delete" menu option
+                // Check if every field is completed
+                if (checkData()){
+                    return false;
+                } else {
+                    // Save book to database
+                    saveBook();
+                    // Exit activity
+                    finish();
+                    return true;
+                }
+                // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 // Pop up confirmation dialog for deletion
                 showDeleteConfirmationDialog();
@@ -346,13 +368,9 @@ public class EditorActivity extends AppCompatActivity implements
             // Update the views on the screen with the values from the database
             nameEditText.setText(name);
             supplierEditText.setText(supplier);
-            priceEditText.setText(Integer.toString(price));
-            quantityEditText.setText(Integer.toString(quantity));
-            phoneNumberEditText.setText(Integer.toString(phoneNumber));
-
-            // Gender is a dropdown spinner, so map the constant value from the database
-            // into one of the dropdown options (0 is Unknown, 1 is Male, 2 is Female).
-            // Then call setSelection() so that option is displayed on screen as the current selection.
+            priceEditText.setText(String.valueOf(price));
+            quantityEditText.setText(String.valueOf(quantity));
+            phoneNumberEditText.setText(String.valueOf(phoneNumber));
 
         }
     }
@@ -450,5 +468,34 @@ public class EditorActivity extends AppCompatActivity implements
 
         // Close the activity
         finish();
+    }
+
+    /**
+     *  Helper method to check whether Data is entered or not. Sets an error message if the field is empty
+     * @return false if every field is completed
+     */
+    private boolean checkData(){
+        String nameString = nameEditText.getText().toString().trim();
+        String supplierString = supplierEditText.getText().toString().trim();
+        String priceString = priceEditText.getText().toString().trim();
+        String quantityString = quantityEditText.getText().toString().trim();
+        String supplierPhoneNumberString = phoneNumberEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(nameString)) nameEditText.setError("Name required");
+
+        if (TextUtils.isEmpty(supplierPhoneNumberString)) phoneNumberEditText.setError("Phone number required");
+
+        if (TextUtils.isEmpty(quantityString)) quantityEditText.setError("Quantity required");
+
+        if (TextUtils.isEmpty(priceString)) priceEditText.setError("Price required");
+
+        if (TextUtils.isEmpty(supplierString)) supplierEditText.setError("Supplier required");
+
+       return (TextUtils.isEmpty(nameString)
+                || TextUtils.isEmpty(supplierPhoneNumberString)
+                || TextUtils.isEmpty(quantityString)
+                || TextUtils.isEmpty(priceString)
+                || TextUtils.isEmpty(supplierString));
+
     }
 }

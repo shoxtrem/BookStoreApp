@@ -73,7 +73,7 @@
                 android:id="@+id/edit_book_supplier_phone_number"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/category_supplier_phone_number"
-                android:inputType="number" />
+                android:inputType="phone" />
         </RelativeLayout>
 
     </LinearLayout>
@@ -101,7 +101,7 @@
                 android:id="@+id/edit_book_price"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/title_book_price"
-                android:inputType="number" />
+                android:inputType="numberDecimal" />
 
             <!-- Units for Price ($) -->
             <TextView

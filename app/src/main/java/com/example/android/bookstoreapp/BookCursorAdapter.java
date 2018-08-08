@@ -55,6 +55,8 @@ class BookCursorAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        // TODO : Only display Product name, price and quantity in the list
+        // TODO : add a Sale button that decreases quantity and doesn't allow negatives + Toast
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = view.findViewById(R.id.name);
         TextView summaryTextView = view.findViewById(R.id.summary);
