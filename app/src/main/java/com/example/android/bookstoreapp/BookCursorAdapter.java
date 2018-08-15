@@ -1,13 +1,20 @@
 package com.example.android.bookstoreapp;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.bookstoreapp.data.BookContract;
 
@@ -54,35 +61,49 @@ class BookCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        // TODO : Only display Product name, price and quantity in the list
-        // TODO : add a Sale button that decreases quantity and doesn't allow negatives + Toast
+    public void bindView(View view, final Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = view.findViewById(R.id.name);
-        TextView summaryTextView = view.findViewById(R.id.summary);
+        final TextView quantityTextView = view.findViewById(R.id.summary);
         TextView priceTextView = view.findViewById(R.id.price);
+        Button salesButton = view.findViewById(R.id.button_sale);
 
         // Find the columns of book attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_NAME);
-        int supplierColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_NAME);
+        int quantityColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_QUANTITY);
         int priceColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_PRICE);
+        int idColumnIndex = cursor.getColumnIndex(BookContract.BookEntry._ID);
 
         // Read the book attributes from the Cursor for the current book
         String bookName = cursor.getString(nameColumnIndex);
-        String bookSupplier = cursor.getString(supplierColumnIndex);
+        final String bookQuantity = cursor.getString(quantityColumnIndex);
         String bookPrice = "$" + cursor.getString(priceColumnIndex);
+        final int id = cursor.getInt(idColumnIndex);
 
+        salesButton.setOnClickListener(new Button.OnClickListener(){
 
-        // If the book supplier is empty string or null, then use some default text
-        // that says "Unknown supplier", so the TextView isn't blank.
-        if (TextUtils.isEmpty(bookSupplier)) {
-            bookSupplier = context.getString(R.string.unknown_supplier);
-        }
+            @Override
+            public void onClick(View view) {
 
+                Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, id);
+                ContentValues values = new ContentValues();
+                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY,bookQuantity);
+
+                if (Integer.valueOf(bookQuantity).equals(0)) {
+                    Toast.makeText(context,"Book quantity cannot be negative", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, Integer.valueOf(bookQuantity) - 1);
+                context.getContentResolver().update(currentBookUri, values, null, null);
+                quantityTextView.setText(bookQuantity);
+
+            }
+        });
         // Update the TextViews with the attributes for the current book
         nameTextView.setText(bookName);
-        summaryTextView.setText(bookSupplier);
+        quantityTextView.setText(bookQuantity);
         priceTextView.setText(bookPrice);
 
     }
+
 }

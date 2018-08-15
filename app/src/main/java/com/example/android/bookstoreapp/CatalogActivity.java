@@ -69,7 +69,7 @@ public class CatalogActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 // Create new intent to go to {@link EditorActivity}
-                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+                Intent intent = new Intent(CatalogActivity.this, DetailsActivity.class);
 
                 // Form the content URI that represents the specific book that was clicked on,
                 // by appending the "id" (passed as input to this method) onto the
@@ -100,7 +100,7 @@ public class CatalogActivity extends AppCompatActivity implements
         values.put(BookContract.BookEntry.COLUMN_BOOK_NAME, "Vingt mille lieues sous les mers: Tour du monde sous-marin");
         values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_NAME, "Public Domain");
         values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, "1579863248");
-        values.put(BookContract.BookEntry.COLUMN_BOOK_PRICE, 11);
+        values.put(BookContract.BookEntry.COLUMN_BOOK_PRICE, 11.56);
         values.put(BookEntry.COLUMN_BOOK_QUANTITY, 10);
 
         // Insert a new row for the book into the provider using the ContentResolver.
@@ -146,9 +146,9 @@ public class CatalogActivity extends AppCompatActivity implements
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Define a projection that specifies the columns from the table we care about.
         String[] projection = {
-                BookContract.BookEntry._ID,
-                BookContract.BookEntry.COLUMN_BOOK_NAME,
-                BookEntry.COLUMN_BOOK_SUPPLIER_NAME,
+                BookEntry._ID,
+                BookEntry.COLUMN_BOOK_NAME,
+                BookEntry.COLUMN_BOOK_QUANTITY,
                 BookEntry.COLUMN_BOOK_PRICE};
 
         // This loader will execute the ContentProvider's query method on a background thread

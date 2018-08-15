@@ -39,6 +39,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CatalogActivity" />
         </activity>
+        <activity android:name=".DetailsActivity" />
+
         <provider
             android:name=".data.BookProvider"
             android:authorities="com.example.android.bookstoreapp"

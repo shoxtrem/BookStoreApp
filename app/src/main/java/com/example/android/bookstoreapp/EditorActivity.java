@@ -167,9 +167,9 @@ public class EditorActivity extends AppCompatActivity implements
 
         values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_NAME, supplierString);
 
-        int supplierPhoneNumber = 0;
+        String supplierPhoneNumber = "";
         if (!TextUtils.isEmpty(supplierPhoneNumberString)) {
-            supplierPhoneNumber = Integer.parseInt(supplierPhoneNumberString);
+            supplierPhoneNumber = supplierPhoneNumberString;
         }
         values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_PHONE_NUMBER, supplierPhoneNumber);
         // If the price is not provided by the user, don't try to parse the string into an
@@ -362,7 +362,7 @@ public class EditorActivity extends AppCompatActivity implements
             String name = cursor.getString(nameColumnIndex);
             String supplier = cursor.getString(supplierColumnIndex);
             int phoneNumber = cursor.getInt(phoneNumberColumnIndex);
-            int price = cursor.getInt(priceColumnIndex);
+            float price = cursor.getFloat(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
 
             // Update the views on the screen with the values from the database

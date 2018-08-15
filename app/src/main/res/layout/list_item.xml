@@ -14,6 +14,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants"
     android:padding="@dimen/activity_margin">
 
     <TextView
@@ -42,7 +43,14 @@
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="#AEB6BD"
             tools:targetApi="jelly_bean"
-            tools:text="this is the supplier's name" />
+            tools:text="this is the quantity" />
+
+        <Button
+            android:id="@+id/button_sale"
+            android:layout_width="44dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_sale" />
 
         <TextView
             android:id="@+id/price"

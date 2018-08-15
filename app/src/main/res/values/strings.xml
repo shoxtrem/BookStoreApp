@@ -105,5 +105,12 @@
 
     <!-- Description for the image when nothing's on -->
     <string name="img_description">Sad face</string>
+    <string name="hint_quantity_changer">Quantity Change</string>
+    <string name="category_quantity_changer">Change Quantity by</string>
+    <string name="button_minus">-</string>
+    <string name="button_add">+</string>
+    <string name="details_quantity_changer_default" >1</string>
+    <string name="action_edit">Edit</string>
+    <string name="button_sale">Sold</string>
 
 </resources>
