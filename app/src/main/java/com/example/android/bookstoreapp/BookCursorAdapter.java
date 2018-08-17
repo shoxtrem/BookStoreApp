@@ -50,6 +50,8 @@ class BookCursorAdapter extends CursorAdapter {
         return LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
     }
 
+
+
     /**
      * This method binds the book data (in the current row pointed to by cursor) to the given
      * list item layout. For example, the name for the current book can be set on the name TextView
@@ -61,7 +63,7 @@ class BookCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public void bindView(View view, final Context context, Cursor cursor) {
+    public void bindView(View view, final Context context,final Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = view.findViewById(R.id.name);
         final TextView quantityTextView = view.findViewById(R.id.summary);
@@ -70,40 +72,61 @@ class BookCursorAdapter extends CursorAdapter {
 
         // Find the columns of book attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_NAME);
-        int quantityColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_QUANTITY);
         int priceColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_PRICE);
+        int quantityColumnIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_QUANTITY);
         int idColumnIndex = cursor.getColumnIndex(BookContract.BookEntry._ID);
+
 
         // Read the book attributes from the Cursor for the current book
         String bookName = cursor.getString(nameColumnIndex);
-        final String bookQuantity = cursor.getString(quantityColumnIndex);
         String bookPrice = "$" + cursor.getString(priceColumnIndex);
-        final int id = cursor.getInt(idColumnIndex);
+        String bookQuantity = cursor.getString(quantityColumnIndex);
 
-        salesButton.setOnClickListener(new Button.OnClickListener(){
+        int id = cursor.getInt(idColumnIndex);
 
-            @Override
-            public void onClick(View view) {
 
-                Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, id);
-                ContentValues values = new ContentValues();
-                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY,bookQuantity);
-
-                if (Integer.valueOf(bookQuantity).equals(0)) {
-                    Toast.makeText(context,"Book quantity cannot be negative", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, Integer.valueOf(bookQuantity) - 1);
-                context.getContentResolver().update(currentBookUri, values, null, null);
-                quantityTextView.setText(bookQuantity);
-
-            }
-        });
+        salesButton.setOnClickListener(new soldBook(context, bookQuantity, id));
         // Update the TextViews with the attributes for the current book
         nameTextView.setText(bookName);
         quantityTextView.setText(bookQuantity);
         priceTextView.setText(bookPrice);
 
+
+
     }
 
-}
+    private class soldBook implements View.OnClickListener{
+
+            String newBookQuantity;
+
+            Context newContext;
+
+            int newId;
+            soldBook(Context context, String bookQuantity, int id){
+
+                newBookQuantity = bookQuantity;
+                newContext = context;
+                newId = id;
+            }
+
+            @Override
+            public void onClick(View view) {
+
+                ContentValues values = new ContentValues();
+                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY,newBookQuantity);
+
+                if (Integer.valueOf(newBookQuantity).equals(0)) {
+                    Toast.makeText(newContext,"Book quantity cannot be negative", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                newBookQuantity = String.valueOf(Integer.valueOf(newBookQuantity) - 1);
+                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, newBookQuantity);
+                Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, newId);
+                newContext.getContentResolver().update(currentBookUri, values, null, null);
+
+            }
+        }
+
+    }
+
+

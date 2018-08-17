@@ -77,7 +77,6 @@ public class CatalogActivity extends AppCompatActivity implements
                 // For example, the URI would be "content://com.example.android.bookstoreapp/books/2"
                 // if the book with ID 2 was clicked on.
                 Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, id);
-
                 // Set the URI on the data field of the intent
                 intent.setData(currentBookUri);
 

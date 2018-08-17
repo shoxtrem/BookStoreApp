@@ -112,5 +112,6 @@
     <string name="details_quantity_changer_default" >1</string>
     <string name="action_edit">Edit</string>
     <string name="button_sale">Sold</string>
+    <string name="summary_text_view">Quantity: </string>
 
 </resources>

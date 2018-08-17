@@ -34,10 +34,21 @@
         android:orientation="horizontal">
 
         <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:fontFamily="sans-serif"
+            android:maxLength="40"
+            android:text="@string/summary_text_view"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="#AEB6BD"
+            tools:targetApi="jelly_bean" />
+
+        <TextView
             android:id="@+id/summary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="6"
+            android:layout_weight="2"
             android:fontFamily="sans-serif"
             android:maxLength="40"
             android:textAppearance="?android:textAppearanceSmall"
