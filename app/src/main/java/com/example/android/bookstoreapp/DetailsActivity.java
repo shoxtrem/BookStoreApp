@@ -1,6 +1,9 @@
 package com.example.android.bookstoreapp;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -12,7 +15,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.bookstoreapp.data.BookContract;
 
@@ -56,7 +63,7 @@ public class DetailsActivity extends AppCompatActivity implements
     private TextView phoneNumberTextView;
 
 
-
+//TODO Create phone call intent somewhere
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +152,7 @@ public class DetailsActivity extends AppCompatActivity implements
             String price = cursor.getString(priceColumnIndex);
             String quantity = cursor.getString(quantityColumnIndex);
 
+            new QuantityChanger(quantity);
             // Update the views on the screen with the values from the database
             nameTextView.setText(name);
             supplierTextView.setText(supplier);
@@ -163,6 +171,66 @@ public class DetailsActivity extends AppCompatActivity implements
         priceTextView.setText("");
         quantityTextView.setText("");
         phoneNumberTextView.setText("");
+    }
+
+    private class QuantityChanger implements View.OnClickListener{
+
+        EditText detailsEditText = findViewById(R.id.details_edit_text_quantity_changer);
+        Button increaseButton = findViewById(R.id.button_add);
+        Button decreaseButton = findViewById(R.id.button_minus);
+        String newBookQuantity;
+        int quantityChanger;
+
+        QuantityChanger(String bookQuantity){
+            newBookQuantity = bookQuantity;
+            increaseButton.setOnClickListener(this);
+            decreaseButton.setOnClickListener(this);
+
+        }
+
+
+        private void increase(){
+            ContentValues values = new ContentValues();
+            if (detailsEditText.getText().toString().trim().equals("")) {
+                quantityChanger = 1;
+            } else {
+                quantityChanger = Integer.parseInt(detailsEditText.getText().toString().trim());
+            }
+            newBookQuantity = String.valueOf(Integer.valueOf(newBookQuantity) + quantityChanger);
+            values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, newBookQuantity);
+            getApplicationContext().getContentResolver().update(currentBookUri, values, null, null);
+        }
+
+        private void decrease(){
+            ContentValues values = new ContentValues();
+            if (detailsEditText.getText().toString().trim().equals("")) {
+                quantityChanger = 1;
+            } else {
+                quantityChanger = Integer.parseInt(detailsEditText.getText().toString().trim());
+            }
+            if (Integer.valueOf(newBookQuantity) - quantityChanger < 0) {
+                Toast.makeText(getApplicationContext(), "Book quantity cannot be negative", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            newBookQuantity = String.valueOf(Integer.valueOf(newBookQuantity) - quantityChanger);
+            values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, newBookQuantity);
+            getApplicationContext().getContentResolver().update(currentBookUri, values, null, null);
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            switch (view.getId()){
+                case R.id.button_add:
+                    increase();
+                    break;
+                case R.id.button_minus:
+                    decrease();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }

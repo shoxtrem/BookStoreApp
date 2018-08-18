@@ -4,10 +4,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +48,6 @@ class BookCursorAdapter extends CursorAdapter {
     }
 
 
-
     /**
      * This method binds the book data (in the current row pointed to by cursor) to the given
      * list item layout. For example, the name for the current book can be set on the name TextView
@@ -63,10 +59,10 @@ class BookCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public void bindView(View view, final Context context,final Cursor cursor) {
+    public void bindView(View view, Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = view.findViewById(R.id.name);
-        final TextView quantityTextView = view.findViewById(R.id.summary);
+        TextView quantityTextView = view.findViewById(R.id.summary);
         TextView priceTextView = view.findViewById(R.id.price);
         Button salesButton = view.findViewById(R.id.button_sale);
 
@@ -81,52 +77,59 @@ class BookCursorAdapter extends CursorAdapter {
         String bookName = cursor.getString(nameColumnIndex);
         String bookPrice = "$" + cursor.getString(priceColumnIndex);
         String bookQuantity = cursor.getString(quantityColumnIndex);
-
         int id = cursor.getInt(idColumnIndex);
 
-
-        salesButton.setOnClickListener(new soldBook(context, bookQuantity, id));
+        // Add a special onClickListener
+        salesButton.setOnClickListener(new SoldBook(context, bookQuantity, id));
         // Update the TextViews with the attributes for the current book
         nameTextView.setText(bookName);
         quantityTextView.setText(bookQuantity);
         priceTextView.setText(bookPrice);
 
 
-
     }
 
-    private class soldBook implements View.OnClickListener{
+    private class SoldBook implements View.OnClickListener {
+        /**
+         * Global variables
+         */
+        String newBookQuantity;
 
-            String newBookQuantity;
+        Context newContext;
 
-            Context newContext;
+        int newId;
 
-            int newId;
-            soldBook(Context context, String bookQuantity, int id){
+        /**
+         *
+         * @param context context of the activity
+         * @param bookQuantity is the quantity of that particular book
+         * @param id is the ID of that particular book in the database
+         */
+        SoldBook(Context context, String bookQuantity, int id) {
 
-                newBookQuantity = bookQuantity;
-                newContext = context;
-                newId = id;
-            }
-
-            @Override
-            public void onClick(View view) {
-
-                ContentValues values = new ContentValues();
-                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY,newBookQuantity);
-
-                if (Integer.valueOf(newBookQuantity).equals(0)) {
-                    Toast.makeText(newContext,"Book quantity cannot be negative", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                newBookQuantity = String.valueOf(Integer.valueOf(newBookQuantity) - 1);
-                values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, newBookQuantity);
-                Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, newId);
-                newContext.getContentResolver().update(currentBookUri, values, null, null);
-
-            }
+            newBookQuantity = bookQuantity;
+            newContext = context;
+            newId = id;
         }
 
+        @Override
+        public void onClick(View view) {
+
+            ContentValues values = new ContentValues();
+//            values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, newBookQuantity);
+
+            if (Integer.valueOf(newBookQuantity).equals(0)) {
+                Toast.makeText(newContext, "Book quantity cannot be negative", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            newBookQuantity = String.valueOf(Integer.valueOf(newBookQuantity) - 1);
+            values.put(BookContract.BookEntry.COLUMN_BOOK_QUANTITY, newBookQuantity);
+            Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, newId);
+            newContext.getContentResolver().update(currentBookUri, values, null, null);
+
+        }
     }
+
+}
 
 
