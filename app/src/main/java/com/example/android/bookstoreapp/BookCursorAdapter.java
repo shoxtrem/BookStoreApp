@@ -90,20 +90,17 @@ class BookCursorAdapter extends CursorAdapter {
     }
 
     private class SoldBook implements View.OnClickListener {
+        final Context newContext;
+        final int newId;
         /**
          * Global variables
          */
         String newBookQuantity;
 
-        Context newContext;
-
-        int newId;
-
         /**
-         *
-         * @param context context of the activity
+         * @param context      context of the activity
          * @param bookQuantity is the quantity of that particular book
-         * @param id is the ID of that particular book in the database
+         * @param id           is the ID of that particular book in the database
          */
         SoldBook(Context context, String bookQuantity, int id) {
 

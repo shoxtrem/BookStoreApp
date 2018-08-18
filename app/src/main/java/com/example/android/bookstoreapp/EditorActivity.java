@@ -154,15 +154,14 @@ public class EditorActivity extends AppCompatActivity implements
         ContentValues values = new ContentValues();
 
 
+        if (TextUtils.isEmpty(nameString)) {
+            Toast.makeText(getApplicationContext(), "Name required", Toast.LENGTH_LONG).show();
+            nameEditText.setError("Name required");
 
-            if (TextUtils.isEmpty(nameString)) {
-                Toast.makeText(getApplicationContext(), "Name required", Toast.LENGTH_LONG).show();
-                nameEditText.setError("Name required");
+        } else if (!TextUtils.isEmpty(nameString)) {
+            values.put(BookContract.BookEntry.COLUMN_BOOK_NAME, nameString);
 
-            } else if (!TextUtils.isEmpty(nameString)) {
-                values.put(BookContract.BookEntry.COLUMN_BOOK_NAME, nameString);
-
-            }
+        }
 
 
         values.put(BookContract.BookEntry.COLUMN_BOOK_SUPPLIER_NAME, supplierString);
@@ -252,7 +251,7 @@ public class EditorActivity extends AppCompatActivity implements
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Check if every field is completed
-                if (checkData()){
+                if (checkData()) {
                     return false;
                 } else {
                     // Save book to database
@@ -361,7 +360,7 @@ public class EditorActivity extends AppCompatActivity implements
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString(nameColumnIndex);
             String supplier = cursor.getString(supplierColumnIndex);
-            int phoneNumber = cursor.getInt(phoneNumberColumnIndex);
+            String phoneNumber = cursor.getString(phoneNumberColumnIndex);
             float price = cursor.getFloat(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
 
@@ -370,7 +369,7 @@ public class EditorActivity extends AppCompatActivity implements
             supplierEditText.setText(supplier);
             priceEditText.setText(String.valueOf(price));
             quantityEditText.setText(String.valueOf(quantity));
-            phoneNumberEditText.setText(String.valueOf(phoneNumber));
+            phoneNumberEditText.setText(phoneNumber);
 
         }
     }
@@ -471,10 +470,11 @@ public class EditorActivity extends AppCompatActivity implements
     }
 
     /**
-     *  Helper method to check whether Data is entered or not. Sets an error message if the field is empty
+     * Helper method to check whether Data is entered or not. Sets an error message if the field is empty
+     *
      * @return false if every field is completed
      */
-    private boolean checkData(){
+    private boolean checkData() {
         String nameString = nameEditText.getText().toString().trim();
         String supplierString = supplierEditText.getText().toString().trim();
         String priceString = priceEditText.getText().toString().trim();
@@ -483,7 +483,8 @@ public class EditorActivity extends AppCompatActivity implements
 
         if (TextUtils.isEmpty(nameString)) nameEditText.setError("Name required");
 
-        if (TextUtils.isEmpty(supplierPhoneNumberString)) phoneNumberEditText.setError("Phone number required");
+        if (TextUtils.isEmpty(supplierPhoneNumberString))
+            phoneNumberEditText.setError("Phone number required");
 
         if (TextUtils.isEmpty(quantityString)) quantityEditText.setError("Quantity required");
 
@@ -491,7 +492,7 @@ public class EditorActivity extends AppCompatActivity implements
 
         if (TextUtils.isEmpty(supplierString)) supplierEditText.setError("Supplier required");
 
-       return (TextUtils.isEmpty(nameString)
+        return (TextUtils.isEmpty(nameString)
                 || TextUtils.isEmpty(supplierPhoneNumberString)
                 || TextUtils.isEmpty(quantityString)
                 || TextUtils.isEmpty(priceString)

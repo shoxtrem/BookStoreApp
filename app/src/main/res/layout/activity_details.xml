@@ -43,9 +43,9 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         android:text=""
-        tools:text="I'm a supplier"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/details_name" />
+        app:layout_constraintTop_toBottomOf="@+id/details_name"
+        tools:text="I'm a supplier" />
 
     <TextView
         android:id="@+id/details_price"
@@ -53,9 +53,9 @@
         android:layout_height="26dp"
         android:layout_marginTop="40dp"
         android:text=""
-        tools:text="85460$"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/details_phone_number" />
+        app:layout_constraintTop_toBottomOf="@+id/details_phone_number"
+        tools:text="85460$" />
 
     <TextView
         android:id="@+id/details_quantity"
@@ -63,9 +63,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:text=""
-        tools:text="85460"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/details_price" />
+        app:layout_constraintTop_toBottomOf="@+id/details_price"
+        tools:text="85460" />
 
     <Button
         android:id="@+id/button_add"
