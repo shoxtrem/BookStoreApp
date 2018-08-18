@@ -1,10 +1,12 @@
 package com.example.android.bookstoreapp;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -63,7 +65,6 @@ public class DetailsActivity extends AppCompatActivity implements
     private TextView phoneNumberTextView;
 
 
-//TODO Create phone call intent somewhere
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +80,7 @@ public class DetailsActivity extends AppCompatActivity implements
         priceTextView = findViewById(R.id.details_price);
         quantityTextView = findViewById(R.id.details_quantity);
         phoneNumberTextView = findViewById(R.id.details_phone_number);
+
 
     }
 
@@ -101,7 +103,7 @@ public class DetailsActivity extends AppCompatActivity implements
                 return true;
 
             case R.id.action_delete:
-                // TODO Add the showDeleteConfirmationDialog() from EditorActivity
+                showDeleteConfirmationDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -148,10 +150,19 @@ public class DetailsActivity extends AppCompatActivity implements
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString(nameColumnIndex);
             String supplier = cursor.getString(supplierColumnIndex);
-            String phoneNumber = cursor.getString(phoneNumberColumnIndex);
+            final String phoneNumber = cursor.getString(phoneNumberColumnIndex);
             String price = cursor.getString(priceColumnIndex);
             String quantity = cursor.getString(quantityColumnIndex);
 
+            phoneNumberTextView.setOnClickListener(new EditText.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + String.valueOf(phoneNumber)));
+                    startActivity(intent);
+                }
+            });
             new QuantityChanger(quantity);
             // Update the views on the screen with the values from the database
             nameTextView.setText(name);
@@ -231,6 +242,62 @@ public class DetailsActivity extends AppCompatActivity implements
                     break;
             }
         }
+    }
+
+    /**
+     * Prompt the user to confirm that they want to delete this book.
+     */
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the positive and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the book.
+                deleteBook();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the book.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Perform the deletion of the book in the database.
+     */
+    private void deleteBook() {
+        // Only perform the delete if this is an existing book.
+        if (currentBookUri != null) {
+            // Call the ContentResolver to delete the book at the given content URI.
+            // Pass in null for the selection and selection args because the currentBookUri
+            // content URI already identifies the book that we want.
+            int rowsDeleted = getContentResolver().delete(currentBookUri, null, null);
+
+            // Show a toast message depending on whether or not the delete was successful.
+            if (rowsDeleted == 0) {
+                // If no rows were deleted, then there was an error with the delete.
+                Toast.makeText(this, getString(R.string.editor_delete_book_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the delete was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.editor_delete_book_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        // Close the activity
+        finish();
     }
 
 }
